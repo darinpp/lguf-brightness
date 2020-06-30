@@ -132,8 +132,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if(std::string(argv[1]) == "all")
-
     int lg_dev_idx = std::stoi(argv[1]);
     int brightness_pct = std::stoi(argv[2]);
 
