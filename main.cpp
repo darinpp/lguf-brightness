@@ -131,8 +131,13 @@ int main(int argc, char *argv[])
         printf("Expected 2 arguments to be passed, the display index and the brightness as a percentage.\n");
         return -1;
     }
+    
+    int lg_dev_idx = -1;
 
-    int lg_dev_idx = std::stoi(argv[1]);
+    if(std::string(argv[1]) != "all") {
+        lg_dev_idx = std::stoi(argv[1]);
+    }
+
     int brightness_pct = std::stoi(argv[2]);
 
     printf("Awesome! lg_dv_idx=%i, brightness_pct=%i\n", lg_dev_idx, brightness_pct);
@@ -157,20 +162,21 @@ int main(int argc, char *argv[])
         return (int)cnt;
     }
 
-    lgdev = get_lg_ultrafine_usb_device(devs, lg_dev_idx);
-    
-    if (lgdev == NULL)
-    {
-        printf("Failed to get LG screen device.\n");
-        return -1;
-    }
+    int idx = lg_dev_idx >= 0 ? lg_dev_idx : 0;
+    while(true) {
+        lgdev = get_lg_ultrafine_usb_device(devs, idx);
 
-    openCode = libusb_open(lgdev, &handle);
-    if (openCode == 0)
-    {
-        libusb_set_auto_detach_kernel_driver(handle, 1);
-        // r = libusb_detach_kernel_driver(handle, iface);
-        // if (r == LIBUSB_SUCCESS) {
+        if (lgdev == NULL)
+        {
+            break;
+        }
+
+        openCode = libusb_open(lgdev, &handle);
+        if (openCode == 0)
+        {
+            libusb_set_auto_detach_kernel_driver(handle, 1);
+            // r = libusb_detach_kernel_driver(handle, iface);
+            // if (r == LIBUSB_SUCCESS) {
             r = libusb_claim_interface(handle, iface);
             if (r == LIBUSB_SUCCESS) {
                 adjust_brightness(handle, brightness_pct);
@@ -181,15 +187,21 @@ int main(int argc, char *argv[])
                 printf("Error: %s\n", libusb_error_name(r));
             }
 
-        // } else {
-        //     printf("Failed to detach interface %d. Error: %d\n", iface, r);
-        //     printf("Error: %s\n", libusb_error_name(r));
-        // }
-        libusb_close(handle);
-    }
-    else
-    {
-        printf("libusb_open failed and returned %d\n", openCode);
+            // } else {
+            //     printf("Failed to detach interface %d. Error: %d\n", iface, r);
+            //     printf("Error: %s\n", libusb_error_name(r));
+            // }
+            libusb_close(handle);
+        }
+        else
+        {
+            printf("libusb_open failed and returned %d\n", openCode);
+        }
+
+        if(idx == lg_dev_idx) {
+            break;
+        }
+        idx++;
     }
 
     libusb_free_device_list(devs, 1);

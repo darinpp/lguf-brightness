@@ -28,3 +28,9 @@ apply. So the above example describes setting the first display to maximum
 brightness.
 
 Beware, setting brightness to 0 will turn backlighting off.
+
+You can also apply the same brightness settings to all displays by specifying
+`all` instead of the display index. So setting all displays to 50% brightness
+would look like this:
+
+`sudo ./lguf_brightness all 50`
