@@ -120,8 +120,8 @@ void set_brightness(libusb_device_handle *handle, uint16_t val)
 
 void adjust_brightness(libusb_device_handle *handle, int brightness_pct)
 {
-    auto brightness = get_brightness(handle);
-    printf("Current brightness = %d%4s\r", int((float(brightness) / 54000) * 100.0), " ");
+    //auto brightness = get_brightness(handle);
+    //printf("Current brightness = %d%4s\r", int((float(brightness) / 54000) * 100.0), " ");
     set_brightness(handle, int(float(max_brightness) * (float(brightness_pct) / 100.0)));
 }
 
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 
     int brightness_pct = std::stoi(argv[2]);
 
-    printf("Awesome! lg_dv_idx=%i, brightness_pct=%i\n", lg_dev_idx, brightness_pct);
+    //printf("Awesome! lg_dv_idx=%i, brightness_pct=%i\n", lg_dev_idx, brightness_pct);
 
     libusb_device **devs, *lgdev;
     int r, openCode, iface = 1;
